@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otel Arama Popup Örneği</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            z-index: 100;
+            background-image: url('https://source.unsplash.com/random/600x400');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        h3 {
+            margin-top: 0;
+            margin-bottom: 1em;
+            color: white;
+        }
+
+        input[type="email"],
+        input[type="search"] {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 1em;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="submit"] {
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 1em;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #303f9f;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: inline-block;
+            margin-bottom: 1em;
+            font-weight: bold;
+        }
+
+        .tab.active {
+            background-color: #3f51b5;
+            color: white;
+        }
+
+        .content {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+        .search-results {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+        }
+
+        .search-results li {
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+
+        .search-results li:hover {
+            background-color: rgba(63, 81, 181, 0.8);
+color: white;
+}
+</style>
+
+</head>
+<body>
+    <div class="overlay" onclick="closePopup()"></div>
+    <div class="popup">
+        <h3>Hoşgeldiniz!</h3>
+        <span class="tab active" onclick="switchTab('newsletter')">Kaydol</span>
+        <span class="tab" onclick="switchTab('search')">Ara</span>
+        <div class="content">
+            <form id="newsletter-form" onsubmit="subscribe(event)">
+                <input type="email" id="email-input" placeholder="E-posta adresinizi girin" autofocus required>
+                <input type="submit" value="Kaydol">
+            </form>
+            <form id="search-form" onsubmit="search(event)" style="display: none;">
+                <input type="search" id="search-input" placeholder="Aranacak oteli girin" oninput="search(event)" required>
+                <ul class="search-results" id="search-results"></ul>
+            </form>
+        </div>
+    </div>
+    <script>
+        const oteller = [
+            { name: 'Otel 1', url: '/otel-1.html' },
+            { name: 'Otel 2', url: '/otel-2.html' },
+            { name: 'Otel 3', url: '/otel-3.html' },
+            // Daha fazla otel ekle abi
+        ];
+    
+        function openPopup() {
+            document.querySelector('.popup').style.display = 'block';
+            document.querySelector('.overlay').style.display = 'block';
+        }
+    
+        function closePopup() {
+            document.querySelector('.popup').style.display = 'none';
+            document.querySelector('.overlay').style.display = 'none';
+        }
+    
+        function switchTab(tab) {
+            if (tab === 'newsletter') {
+                document.getElementById('newsletter-form').style.display = 'block';
+                document.getElementById('search-form').style.display = 'none';
+            } else {
+                document.getElementById('newsletter-form').style.display = 'none';
+                document.getElementById('search-form').style.display = 'block';
+            }
+    
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(el => {
+                if (el.textContent.includes(tab)) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+    
+        function subscribe(event) {
+            event.preventDefault();
+            let email = document.getElementById('email-input').value;
+            console.log("E-posta adresi: " + email);
+            alert("Teşekkürler! Başarıyla kaydoldunuz :)");
+            closePopup();
+        }
+    
+        function search(event) {
+            event.preventDefault();
+            let query = document.getElementById('search-input').value.toLowerCase();
+            let searchResults = document.getElementById('search-results');
+    
+            searchResults.innerHTML = '';
+    
+            oteller.forEach(otel => {
+                if (otel.name.toLowerCase().includes(query)) {
+                    let li = document.createElement('li');
+                    li.textContent = otel.name;
+                    li.onclick = () => window.location.href = otel.url;
+                    searchResults.appendChild(li);
+                }
+            });
+        }
+    
+        window.onload = openPopup;
+    </script>
+    </body>
+    </html>    
